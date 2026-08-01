@@ -1,14 +1,27 @@
 {
-  "arroz": [
-    7,
-    2.0
-  ],
-  "feijao": [
-    10,
-    5.0
-  ],
-  "manga": [
-    8,
-    5.0
-  ]
+  "arroz": {
+    "nome": "arroz",
+    "quantidade": 7,
+    "preco": 2.0
+  },
+  "feijao": {
+    "nome": "feijao",
+    "quantidade": 10,
+    "preco": 5.0
+  },
+  "manga": {
+    "nome": "manga",
+    "quantidade": 10,
+    "preco": 0.5
+  },
+  "cebola": {
+    "nome": "cebola",
+    "quantidade": 2,
+    "preco": 2.0
+  },
+  "biscoito": {
+    "nome": "biscoito",
+    "quantidade": 44,
+    "preco": 10.0
+  }
 }

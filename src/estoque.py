@@ -1,57 +1,70 @@
 """Lógica de negócio do estoque: carregar, salvar, cadastrar e vender produtos.
 
-Nenhuma linha aqui sabe que existe uma janela — por isso essa lógica poderia ser
-reaproveitada em outro contexto (uma API, um bot, um teste) sem depender do Tkinter.
+Os produtos agora são representados pela dataclass Produto em vez de listas soltas
+([quantidade, preco]) -- evita bugs de posição trocada e deixa o código autoexplicativo.
 """
 
 import json
+from dataclasses import asdict, dataclass
 from pathlib import Path
 
 ARQUIVO_PADRAO = Path(__file__).resolve().parent.parent / "data" / "estoque.json"
 
 
-def carregar_estoque(caminho: Path = ARQUIVO_PADRAO) -> dict:
-    if caminho.exists():
-        with open(caminho, "r", encoding="utf-8") as arquivo:
-            return json.load(arquivo)
-    return {}
+@dataclass
+class Produto:
+    nome: str
+    quantidade: int
+    preco: float
 
 
-def salvar_estoque(estoque: dict, caminho: Path = ARQUIVO_PADRAO) -> None:
+def carregar_estoque(caminho: Path = ARQUIVO_PADRAO) -> dict[str, Produto]:
+    if not caminho.exists():
+        return {}
+
+    with open(caminho, "r", encoding="utf-8") as arquivo:
+        dados_brutos = json.load(arquivo)
+
+    return {nome: Produto(**dados) for nome, dados in dados_brutos.items()}
+
+
+def salvar_estoque(estoque: dict[str, Produto], caminho: Path = ARQUIVO_PADRAO) -> None:
     caminho.parent.mkdir(exist_ok=True)
+    dados_brutos = {nome: asdict(produto) for nome, produto in estoque.items()}
     with open(caminho, "w", encoding="utf-8") as arquivo:
-        json.dump(estoque, arquivo, ensure_ascii=False, indent=2)
+        json.dump(dados_brutos, arquivo, ensure_ascii=False, indent=2)
 
 
-def cadastrar_produto(estoque: dict, produto: str, quantidade: int, preco: float) -> None:
-    estoque[produto.strip().lower()] = [quantidade, preco]
+def cadastrar_produto(estoque: dict[str, Produto], nome: str, quantidade: int, preco: float) -> None:
+    nome = nome.strip().lower()
+    estoque[nome] = Produto(nome=nome, quantidade=quantidade, preco=preco)
 
 
-def vender_produto(estoque: dict, produto: str, quantidade: int) -> tuple[bool, str]:
-    produto = produto.strip().lower()
+def vender_produto(estoque: dict[str, Produto], nome: str, quantidade: int) -> tuple[bool, str]:
+    nome = nome.strip().lower()
 
-    if produto not in estoque:
+    if nome not in estoque:
         return False, "Produto não encontrado."
 
-    estoque[produto][0] -= quantidade
-    if estoque[produto][0] < 0:
-        estoque[produto][0] = 0
+    produto = estoque[nome]
+    produto.quantidade = max(0, produto.quantidade - quantidade)
 
     return True, f"{quantidade} unidades vendidas."
 
 
-def formatar_consulta(estoque: dict) -> str:
+def formatar_consulta(estoque: dict[str, Produto]) -> str:
     if not estoque:
         return "Sem produtos cadastrados."
 
     linhas = [
-        f"{produto.title():<12} {quantidade:>6} un  |  R$ {preco:>6.2f}"
-        for produto, (quantidade, preco) in estoque.items()
+        f"{produto.nome.title():<12} {produto.quantidade:>6} un  |  R$ {produto.preco:>6.2f}"
+        for produto in estoque.values()
     ]
     return "\n".join(linhas)
 
 
-def calcular_totais(estoque: dict) -> tuple[int, int]:
+def calcular_totais(estoque: dict[str, Produto]) -> tuple[int, int]:
     total_produtos = len(estoque)
-    total_itens = sum(quantidade for quantidade, _ in estoque.values())
+    total_itens = sum(produto.quantidade for produto in estoque.values())
     return total_produtos, total_itens
+
