@@ -2,6 +2,8 @@
 
 Rodar: python -m src.main
 """
+# Praticando fluxo de branch e commit - Analista de Automação
+
 
 from src.interface import AppEstoque
 
