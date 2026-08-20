@@ -4,12 +4,15 @@ Os produtos agora são representados pela dataclass Produto (ou ProdutoPerecivel
 para itens com data de validade) em vez de listas soltas.
 """
 
+# Aplicando comentario na pagina estoque
+
 import json
 from dataclasses import asdict, dataclass
 from datetime import date
 from pathlib import Path
 
-ARQUIVO_PADRAO = Path(__file__).resolve().parent.parent / "data" / "estoque.json"
+ARQUIVO_PADRAO = Path(__file__).resolve(
+).parent.parent / "data" / "estoque.json"
 
 
 @dataclass
@@ -37,7 +40,8 @@ def carregar_estoque(caminho: Path = ARQUIVO_PADRAO) -> dict[str, Produto]:
     estoque: dict[str, Produto] = {}
     for nome, dados in dados_brutos.items():
         if "validade" in dados:
-            dados = {**dados, "validade": date.fromisoformat(dados["validade"])}
+            dados = {
+                **dados, "validade": date.fromisoformat(dados["validade"])}
             estoque[nome] = ProdutoPerecivel(**dados)
         else:
             estoque[nome] = Produto(**dados)
@@ -68,7 +72,8 @@ def cadastrar_produto_perecivel(
     estoque: dict[str, Produto], nome: str, quantidade: int, preco: float, validade: date
 ) -> None:
     nome = nome.strip().lower()
-    estoque[nome] = ProdutoPerecivel(nome=nome, quantidade=quantidade, preco=preco, validade=validade)
+    estoque[nome] = ProdutoPerecivel(
+        nome=nome, quantidade=quantidade, preco=preco, validade=validade)
 
 
 def listar_vencidos(estoque: dict[str, Produto]) -> list[Produto]:
