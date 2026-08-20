@@ -7,7 +7,7 @@ Rodar: python -m src.main
 # treinando pull request
 
 # acabei e selecionar a branch : Testando - nova - brach
-
+# enviando mais uma comentario na branch - Testando
 
 
 from src.interface import AppEstoque
