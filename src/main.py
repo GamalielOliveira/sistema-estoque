@@ -6,6 +6,9 @@ Rodar: python -m src.main
 # Praticando fluxo visual no VS Code
 # treinando pull request
 
+# acabei e selecionar a branch : Testando - nova - brach
+
+
 
 from src.interface import AppEstoque
 
