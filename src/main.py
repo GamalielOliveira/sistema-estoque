@@ -3,6 +3,7 @@
 Rodar: python -m src.main
 """
 # Praticando fluxo de branch e commit - Analista de Automação
+# Praticando fluxo visual no VS Code
 
 
 from src.interface import AppEstoque
